@@ -14,10 +14,18 @@ import AppLayout from "@/layouts/AppLayout";
 import InboxPage from "@/pages/InboxPage";
 import appAction from '@/routes/actions/appAction';
 import inboxTaskLoader from "@/routes/loaders/inboxloader";
-// import inboxAction from "@/routes/actions/inboxAction";
-
-// import { RouteObject } from "react-router";
-
+import TodayTaskPage from "@/pages/TodayTaskPage";
+import todayTaskLoader from "@/routes/loaders/todayTaskLoader";
+import upcomingTaskLoader from "@/routes/loaders/upcomingTaskLoader";
+import UpcomingTaskPage from "@/pages/UpcomingTaskPage";
+import CompletedTaskPage from "@/pages/CompletedTaskPage";
+import completedTaskLoader from "@/routes/loaders/completedTaskLoader";
+import { act } from "react";
+import projectAction from "@/routes/actions/projectAction";
+import ProjectsPage from "@/pages/ProjectsPage";
+import projectsLoader from "@/routes/loaders/projectsloader";
+import ProjectDetailPage from "@/pages/ProjectDetailPage";
+import projectDetailLoader from "@/routes/loaders/projectDetailLoader";
 
 const rootRouteChildren=[
             {
@@ -42,7 +50,33 @@ const rootRouteChildren=[
                 path:'inbox',
                 element:<InboxPage/>,
                 loader: inboxTaskLoader,
-                // action: inboxAction,
+                
+            },
+            {
+                path: 'today',
+                element: <TodayTaskPage/>,
+                loader: todayTaskLoader,
+            },
+            {
+                path: 'upcoming',
+                element: <UpcomingTaskPage/>,
+                loader: upcomingTaskLoader,
+            },
+                        {
+                path: 'completed',
+                element: <CompletedTaskPage/>,
+                loader: completedTaskLoader,
+            },
+              {
+                path: 'projects',
+                element: <ProjectsPage/>,
+                action: projectAction,
+                loader: projectsLoader,
+            },
+            {
+                path: 'projects/:projectId',
+                element: <ProjectDetailPage/>,
+                loader: projectDetailLoader,
             }
         ]
 

@@ -1,0 +1,90 @@
+/**
+ * @copyright 2024 codewithsadee
+ * @license Apache-2.0
+ * @description projectpage for the app
+ */
+
+import { cn } from "@/lib/utils";
+import { useCallback, useRef, useState } from "react";
+import { useLoaderData, useFetcher } from "react-router";
+import Head from "@/components/Head";
+import { Button } from "@/components/ui/button";
+import TopAppBar from "@/components/TopAppBar";
+import ProjectFormDialog from "@/components/ProjectFormDailog";
+import { Page, PageHeader, PageTitle, PageList } from "@/components/Page";
+import { Plus } from "lucide-react";
+import ProjectCard from "@/components/ui/ProjectCard";
+import ProjectSerarchField from "@/components/ProjectSerarchField";
+
+const SEARCH_TIMEOUT_DELAY=500;
+const ProjectsPage = () => {
+  const fetcher=useFetcher();
+  const fetcherData  = fetcher.data ;
+  const loaderData = useLoaderData();
+const {projects}= fetcherData || loaderData;
+const searchTimeout= useRef();
+const [searchingState, setSearchingState]=useState('idle');
+
+const handleProjectSearch=useCallback((e)=> {
+if(searchTimeout.current){
+  clearTimeout(searchTimeout.current);
+}
+const submitTarget=e.currentTarget.form;
+searchTimeout.current=setTimeout(async()=>{
+setSearchingState('searching');
+await fetcher.submit(submitTarget);
+setSearchingState('idle');
+},SEARCH_TIMEOUT_DELAY)
+setSearchingState('loading');
+},[])
+  return (
+    <>
+      <Head title="My-Projects - Tasky AI" />
+      <TopAppBar title="My Projects" />
+      <Page>
+        <PageHeader>
+          <div className="flex items-center gap-2">
+            <PageTitle>My Projects</PageTitle>
+            <ProjectFormDialog method="POST">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-8 h-8"
+                aria-label="Create a project"
+              >
+                <Plus />
+              </Button>
+            </ProjectFormDialog>
+          </div>
+<fetcher.Form method="get" action="/app/projects">
+
+<ProjectSerarchField handleChange={handleProjectSearch} searchingState={searchingState}/>
+</fetcher.Form>
+
+        </PageHeader>
+
+        <PageList>
+          <div className="h-8 flex items-center border-b">
+            <div className="text-sm">{projects.total} projects</div>
+          </div>
+
+          <div className={cn(searchingState=== 'searching' && 'opacity-25')}>
+            {
+              projects.documents.map((project) => (
+                <ProjectCard key={project.$id} project={project}/>
+              ))
+            }
+
+            {
+              projects.total ===0 && (
+                <div className="h-14 flex justify-center items-center text-muted-foreground"> No project found</div>
+              )
+            }
+          </div>
+        </PageList>
+      </Page>
+    </>
+  );
+};
+
+export default ProjectsPage;

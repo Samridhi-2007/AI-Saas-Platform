@@ -1,7 +1,7 @@
 /**
  * @copyright 2024 codewithsadee
  * @license Apache-2.0
- * @description App action for the app
+ * @description completedTaskLoader for the app
  */
 import { databases, Query } from "@/lib/appwrite";
 import { getUserId } from "@/lib/utils";
@@ -14,23 +14,22 @@ const getTasks = async()=>{
        APPWRITE_DATABASE_ID,
        'tasks',
        [
-        Query.equal('completed',false),
-        
-Query.isNull('project'),
-Query.equal('userId',getUserId())
+        Query.equal('completed',true),
+        Query.orderDesc('$updatedAt'),
+       Query.equal('userId',getUserId())
        ]
    )
     }catch(err){
         console.log(err);
-        throw new Error("Error getting inbox tasks")
+        throw new Error("Error getting completed tasks")
     }
 }
 
 
-const inboxTaskLoader = async () => {
+const CompletedTaskLoader = async () => {
   const tasks = await getTasks();
   return {tasks};
 
 };
 
-export default inboxTaskLoader;
+export default CompletedTaskLoader;

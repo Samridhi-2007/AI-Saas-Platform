@@ -1,11 +1,11 @@
 /**
  * @copyright 2024 codewithsadee
  * @license Apache-2.0
- * @description App action for the app
+ * @description upcomingTaskLoader for the app
  */
 import { databases, Query } from "@/lib/appwrite";
 import { getUserId } from "@/lib/utils";
-
+import { startOfToday } from "date-fns";
 const APPWRITE_DATABASE_ID=import.meta.env.VITE_APPWRITE_DATABASE_ID
 
 const getTasks = async()=>{
@@ -16,21 +16,23 @@ const getTasks = async()=>{
        [
         Query.equal('completed',false),
         
-Query.isNull('project'),
+Query.isNotNull('due_date'),
+Query.greaterThanEqual('due_date', startOfToday().toISOString()),
+Query.orderAsc('due_date'),
 Query.equal('userId',getUserId())
        ]
    )
     }catch(err){
         console.log(err);
-        throw new Error("Error getting inbox tasks")
+        throw new Error("Error getting upcoming tasks")
     }
 }
 
 
-const inboxTaskLoader = async () => {
+const UpcomingTaskLoader = async () => {
   const tasks = await getTasks();
   return {tasks};
 
 };
 
-export default inboxTaskLoader;
+export default UpcomingTaskLoader;

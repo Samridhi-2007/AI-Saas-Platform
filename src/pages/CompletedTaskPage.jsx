@@ -1,8 +1,9 @@
 /** 
 *@copyright 2024 codewithsadee
 *@license Apache-2.0
-*@description IndexPage for the app
+*@description completedtaskpage for the app
 */
+
 import { useState } from "react";
 import { useFetcher, useLoaderData } from "react-router-dom";
 import Head from "@/components/Head";
@@ -13,18 +14,20 @@ import TaskEmptyState from "@/components/TaskEmptyState";
 import TaskFormComponent from "@/components/TaskForm";
 import TaskCard from "@/components/TaskCard";
 import TaskcardSkeleton from "@/components/taskcardSkeleton";
-const InboxPage = () => {
-  const fetcher = useFetcher();
+import { CheckCircle2 } from "lucide-react";
+const CompletedTaskPage = () => {
+ const fetcher = useFetcher();
   const { tasks } = useLoaderData();
   const [taskFormShow, setTaskFormShow] =useState(false);
   return (
    <>
-   <Head title='Inbox - Tasky AI'/>
-   <TopAppBar title='Inbox' taskCount={20}/>
+   <Head title='Completed - Tasky AI'/>
+   <TopAppBar title='Completed' taskCount={tasks.total}/>
 
    <Page>
     <PageHeader>
-      <PageTitle>Inbox</PageTitle>
+      <PageTitle>Completed</PageTitle>
+
     </PageHeader>
     <PageList>
       {
@@ -34,29 +37,14 @@ const InboxPage = () => {
   <TaskCard key={$id} id={$id} content={content} completed={completed} dueDate={due_date} project={project}/>
         ))
       }
-      {
-       fetcher.state !== 'idle' && <TaskcardSkeleton />
-      }
-     {!taskFormShow &&  <TaskCreateButton onClick={()=>setTaskFormShow(true)} />}
-     {!tasks.total && !taskFormShow && <TaskEmptyState type="inbox"/>}
-      {taskFormShow && (
-        <TaskFormComponent className="mt-1" mode="create"
-        onCancel={()=>setTaskFormShow(false)}
-        onSubmit={(formData) =>{
-          fetcher.submit(JSON.stringify(formData),{
-            action:'/app',
-            method: 'POST',
-            encType:'application/json',
-          })
-        }}  />
-      )}
+     {!tasks.total && !taskFormShow && <TaskEmptyState type='completed'/>}
+      
     </PageList>
     
    </Page>
 
    </>
   );
-};
+}
 
-export default InboxPage;
-
+export default CompletedTaskPage;

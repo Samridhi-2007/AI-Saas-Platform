@@ -1,11 +1,11 @@
 /**
  * @copyright 2024 codewithsadee
  * @license Apache-2.0
- * @description App action for the app
+ * @description todaytaskloader for the app
  */
 import { databases, Query } from "@/lib/appwrite";
 import { getUserId } from "@/lib/utils";
-
+import { startOfToday ,startOfTomorrow} from "date-fns";
 const APPWRITE_DATABASE_ID=import.meta.env.VITE_APPWRITE_DATABASE_ID
 
 const getTasks = async()=>{
@@ -15,9 +15,11 @@ const getTasks = async()=>{
        'tasks',
        [
         Query.equal('completed',false),
-        
-Query.isNull('project'),
-Query.equal('userId',getUserId())
+       Query.and([
+           Query.greaterThanEqual('due_date', startOfToday().toISOString()),
+           Query.lessThan('due_date', startOfTomorrow().toISOString())
+       ]),
+       Query.equal('userId', getUserId())
        ]
    )
     }catch(err){
@@ -27,10 +29,11 @@ Query.equal('userId',getUserId())
 }
 
 
-const inboxTaskLoader = async () => {
+const todayTaskLoader = async () => {
   const tasks = await getTasks();
+
   return {tasks};
 
 };
 
-export default inboxTaskLoader;
+export default todayTaskLoader;

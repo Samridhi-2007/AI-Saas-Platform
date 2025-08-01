@@ -44,7 +44,7 @@ useEffect(() => {
           defaultFormData={{
             content: "",
             due_date: location.pathname === "/app/today" ? startOfDay(new Date()) : null, // ⬅️ FIXED: pass Date
-            projectId: null,
+            project: null,
           }}
           mode="create"
           onCancel={() => setOpen(false)}

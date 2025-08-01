@@ -4,7 +4,7 @@
 *@description Appsidebaar for the app
 */
 
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Plus } from "lucide-react";
 import TaskFormDialog from "@/components/TaskFormDialog";
 import { Sidebar,SidebarHeader,SidebarContent,SidebarFooter,
@@ -19,12 +19,15 @@ SidebarGroup,
 } from "@/components/ui/sidebar";
 import Logo from "@/components/Logo";
 import { UserButton } from "@clerk/clerk-react";
+import { useSidebar } from "@/components/ui/sidebar";
 import { CirclePlus, ChevronRight } from "lucide-react";
 import { SIDEBAR_LINKS } from "@/constants";
 import { Collapsible ,CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@radix-ui/react-tooltip";
-
+import ProjectFormDialog from "@/components/ProjectFormDailog";
 const AppSidebar = () => {
+const location = useLocation();
+const { isMobile, setOpenMobile } = useSidebar();
   return (
     
     <Sidebar>
@@ -51,7 +54,13 @@ const AppSidebar = () => {
                 </SidebarMenuItem>
                 {SIDEBAR_LINKS.map((item,index)=>(
                   <SidebarMenuItem key={index} className=''>
-<SidebarMenuButton className="flex items-center gap-2 w-full p-2 rounded-md hover:bg-sidebar-accent text-sm text-foregroun">
+<SidebarMenuButton asChild isActive={location.pathname === item.href}
+onClick={()=>{
+if (isMobile) {
+setOpenMobile(false);
+}
+}}
+className="flex items-center gap-2 w-full p-2 rounded-md hover:bg-sidebar-accent text-sm text-foreground">
   <Link to={item.href} className="flex items-center gap-2 w-full">
   <item.icon className="w-5 h-5"/>
   <span>{item.label}</span>
@@ -74,11 +83,13 @@ const AppSidebar = () => {
 
 </SidebarGroupLabel>
 <Tooltip>
+ <ProjectFormDialog method='POST'>
   <TooltipTrigger asChild>
   <SidebarGroupAction aria-label='Add project'>
   <Plus/>
 </SidebarGroupAction>
 </TooltipTrigger>
+</ProjectFormDialog>
 <TooltipContent
   side="right"
   className="bg-orange-500 text-white text-xs rounded px-2 py-1 shadow-lg"

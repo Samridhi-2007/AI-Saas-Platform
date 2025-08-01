@@ -61,6 +61,28 @@ const updateTask = async (data) => {
   }
 };
 
+// ✅ DELETE TASK
+const deleteTask = async (data) => {
+  try {
+    const { id } = data;
+    if (!id) throw new Error("Task ID is required for delete");
+
+    await databases.deleteDocument(
+      APPWRITE_DATABASE_ID,
+      TASKS_COLLECTION_ID,
+      id
+    );
+
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    console.error("[DeleteTask Error]:", err.message);
+    return new Response("Failed to delete task", { status: 500 });
+  }
+};
+
 // ✅ ACTION HANDLER
 const appAction = async ({ request }) => {
   try {
@@ -80,6 +102,10 @@ const appAction = async ({ request }) => {
 
     if (method === "PUT") {
       return await updateTask(body);
+    }
+
+    if (method === "DELETE") {
+      return await deleteTask(body);
     }
 
     return new Response("Method Not Allowed", { status: 405 });

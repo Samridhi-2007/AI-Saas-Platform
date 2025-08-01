@@ -64,11 +64,21 @@ if(isTomorrow(dueDate) && !completed){
 }
 }
 /**
- * @returns {string} A unique identifier string 
+ * @returns {string} A unique identifier string compatible with Appwrite
+ * Only contains a-z, A-Z, 0-9, and underscore. Max 36 characters.
  */
- export function generateID(){
-return Math.random().toString(36).slice(8) + Date.now().toString(36);
- }
+export function generateID() {
+  // Generate a random string with only valid characters
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const randomPart = Array.from({ length: 8 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+  
+  // Use timestamp in base36 (only contains 0-9, a-z)
+  const timestamp = Date.now().toString(36);
+  
+  // Combine and ensure it's under 36 characters
+  const id = randomPart + timestamp;
+  return id.length > 36 ? id.slice(0, 36) : id;
+}
 export function getUserId() {
   const clerkUserId = localStorage.getItem('clerkUserId');
 
@@ -80,3 +90,11 @@ export function getUserId() {
 
   return clerkUserId;
 }
+
+export function truncateString(str, maxLength) {
+  if (str.length > maxLength) {
+    return `${str.slice(0, maxLength - 1)}...`;
+  }
+  return str; 
+}
+
